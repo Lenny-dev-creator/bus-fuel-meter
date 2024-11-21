@@ -1,6 +1,6 @@
 import tkinter as tk
+from tkinter import PhotoImage
 from tkinter import messagebox
-
 
 class FuelMeter:
     def __init__(self, root):
@@ -13,19 +13,20 @@ class FuelMeter:
         self.is_paused = False
         self.decrement_interval = 120000  # 2 minutes in milliseconds
 
-        # Create fuel bars
+        # Load fuel icon (make sure you have a 'fuel_icon.png' file in your directory)
+        self.fuel_icon = PhotoImage(file="fuel_icon.png")
+
+        # Create fuel bars (swap green and red bars)
         self.fuel_bars = []
         for i in range(self.max_fuel):
-            color = "green" if i < 13 else "red"
-            bar = tk.Frame(root, width=30, height=20, bg=color, relief="ridge", borderwidth=1)
-            bar.grid(row=self.max_fuel - i - 1, column=0, padx=5, pady=2)
+            color = "red" if i < 2 else "green"  # Top 2 bars red, rest green
+            bar = tk.Frame(root, width=20, height=20, bg=color, relief="ridge", borderwidth=1)
+            bar.grid(row=i, column=0, padx=5, pady=2)
             self.fuel_bars.append(bar)
 
-        # Instructions
-        self.instructions = tk.Label(
-            root, text="Single Tap: Pause/Play\nDouble Tap: Refill Fuel", font=("Arial", 12)
-        )
-        self.instructions.grid(row=0, column=1, padx=10, pady=10, sticky="w")
+        # Add fuel icon at the bottom of the screen
+        self.fuel_icon_label = tk.Label(root, image=self.fuel_icon)
+        self.fuel_icon_label.grid(row=self.max_fuel, column=0, pady=10)
 
         # Bind mouse actions
         root.bind("<Button-1>", self.handle_single_tap)  # Single tap (pause/play)
@@ -47,7 +48,7 @@ class FuelMeter:
         """Update the visual representation of the fuel level."""
         for i in range(self.max_fuel):
             if i < self.current_fuel:
-                self.fuel_bars[i].configure(bg="green" if i < 13 else "red")
+                self.fuel_bars[i].configure(bg="green" if i >= 2 else "red")
             else:
                 self.fuel_bars[i].configure(bg="gray")
 
